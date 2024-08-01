@@ -23,24 +23,5 @@ parameters:
 pool:
   vmImage: ubuntu-22.04
 stages:
-  - stage: build
-    displayName: 'build using maven'
-    jobs:
-      - job: build
-        displayName: maven build
-        steps:
-        - task: 'Maven@4'
-          inputs:
-            mavenPOMFile: 'pom.xml'
-            goals: 'clean package'
-            testResultsFiles: '**/surefire-reports/TEST-*.xml'
-            javaHomeOption: 'JDKVersion'
-            jdkVersionOption: ${{ parameters.jdkversion }}
-        - task: CopyFiles@2
-          inputs:
-            contents: '**/*.war'
-            targetFolder: $(Build.ArtifactStagingDirectory)
-        - task: PublishBuildArtifacts@1
-          inputs:
-            pathToPublish: $(Build.ArtifactStagingDirectory)
-            artifactName: GameOfLife
+  -template: templates/build-stage-gol.yml
+  

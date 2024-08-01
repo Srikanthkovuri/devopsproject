@@ -13,7 +13,7 @@ parameters:
   - name: jdkversion
     displayName: java version
     type: string
-    default: '1.8'
+    default: '1.17'
     values:
       - '1.17'
       - '1.11'
@@ -23,26 +23,8 @@ parameters:
 pool:
   vmImage: ubuntu-22.04
 stages:
-  - stage: build
-    displayName: 'build using maven'
-    jobs:
-      - job: build
-        displayName: maven build
-        steps:
-        - bash: echo $(USERNAME)
-        - bash: echo $(PASSWORD)
-        - task: 'Maven@4'
-          inputs:
-            mavenPOMFile: 'pom.xml'
-            goals: 'clean package'
-            testResultsFiles: '**/surefire-reports/TEST-*.xml'
-            javaHomeOption: 'JDKVersion'
-            jdkVersionOption: ${{ parameters.jdkversion }}
-        - task: CopyFiles@2
-          inputs:
-            contents: '**/*.war'
-            targetFolder: $(Build.ArtifactStagingDirectory)
-        - task: PublishBuildArtifacts@1
-          inputs:
-            pathToPublish: $(Build.ArtifactStagingDirectory)
-            artifactName: GameOfLife
+  - template: templates/build-stage-spc.yml
+    parameters:
+      jdkversion: '1.17'
+     
+        
