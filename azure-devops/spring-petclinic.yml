@@ -1,24 +1,25 @@
 ---
+variables:
+  - group: spring-petclinic
 trigger:
-  - main
+  - "$(DEFAULT-BRANCH)"
 schedules:
   - cron: '30 13 * * 6'
     displayName: 'build on weekly'
     branches:
       include:
-        - main
+        - "$(DEFAULT-BRANCH)"
 parameters:
   - name: jdkversion
     displayName: java version
     type: string
-    default: '1.17'
+    default: '1.8'
     values:
       - '1.17'
       - '1.11'
       - '1.10'
       - '1.8'
       - '1.9'
-
 pool:
   vmImage: ubuntu-22.04
 stages:
@@ -28,10 +29,20 @@ stages:
       - job: build
         displayName: maven build
         steps:
+        - bash: echo $(USERNAME)
+        - bash: echo $(PASSWORD)
         - task: 'Maven@4'
           inputs:
             mavenPOMFile: 'pom.xml'
             goals: 'clean package'
             testResultsFiles: '**/surefire-reports/TEST-*.xml'
             javaHomeOption: 'JDKVersion'
-            jdkVersionOption: '1.17'
+            jdkVersionOption: ${{ parameters.jdkversion }}
+        - task: CopyFiles@2
+          inputs:
+            contents: '**/*.war'
+            targetFolder: $(Build.ArtifactStagingDirectory)
+        - task: PublishBuildArtifacts@1
+          inputs:
+            pathToPublish: $(Build.ArtifactStagingDirectory)
+            artifactName: GameOfLife
