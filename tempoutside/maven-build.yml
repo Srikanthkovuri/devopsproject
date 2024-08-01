@@ -1,0 +1,23 @@
+---
+parameters:
+  - name: jdkversion
+    displayName: java version
+    type: string
+    default: '1.17'
+stages:
+  - stage: build
+    displayName: 'build using maven'
+    jobs:
+      - job: build
+        displayName: maven build
+        steps:
+        - bash: echo $(USERNAME)
+        - bash: echo $(PASSWORD)
+        - task: 'Maven@4'
+          inputs:
+            mavenPOMFile: 'pom.xml'
+            goals: 'clean package'
+            testResultsFiles: '**/surefire-reports/TEST-*.xml'
+            javaHomeOption: 'JDKVersion'
+            jdkVersionOption: '1.17'
+        
