@@ -1,0 +1,21 @@
+---
+jobs:
+  - job: ci
+    disolayName: build docker
+    pool:
+      vmImage: ubuntu-22.04
+      disolayName: microsoft hosted agent
+    steps:
+      - bash: echo hello srikanth!
+      - task: Doker@2
+        inputs:
+          command: build
+          Dokerfile: '**/Dockerfile'
+          buildcontext: '**'
+  - job: debug
+    disolayName: debug 
+    pool:
+      vmImage: windows-2022
+      disolayName: microsoft hosted windows
+    steps:
+      - bash: echo welcome to windows

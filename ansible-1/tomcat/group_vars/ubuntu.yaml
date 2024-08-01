@@ -1,0 +1,7 @@
+
+java_package: openjdk-17-jdk
+user_name: tomcat
+group_name: tomcat
+home_dir: /opt/tomcat
+def_shell: /bin/false
+version: 10.1.26

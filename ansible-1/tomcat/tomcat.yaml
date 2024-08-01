@@ -1,0 +1,41 @@
+---
+- name: install tomcat on ubuntu 22.04
+  hosts: all
+  become: yes
+  tasks:
+    - name: update packages and insatll java 17
+      ansible.builtin.apt:
+        name: "{{ java_package }}"
+        update_cache: yes
+        state: present
+    - name:  create a group tomcat
+      ansible.builtin.group:
+        name: "{{ group_name }}"
+        state: present
+    - name: create a system user tomcat
+      ansible.builtin.user:
+        name: "{{ user_name }}"
+        create_home: yes
+        group: "{{ group_name }}"
+        home: "{{ home_dir }}"
+        shell: "{{ def_shell }}"
+        state: present
+    - name: insatll and extract tomcat 
+      ansible.builtin.unarchive:
+        src: https://www-eu.apache.org/dist/tomcat/tomcat-10/v{{ version }}/bin/c.tar.gz
+        dest: "{{ home_dir }}"
+        remote_src: yes
+    - name: create a symbolic link
+      ansible.builtin.file:
+        src: "{{ home_dir }}/apache-tomcat-{{ version }}"
+        dest: "{{ home_dir }}/latest"
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
+        state: link
+    - name: changing ownership permission recursively
+      ansible.builtin.file:
+        path: "{{ home_dir }}"
+        state: directory
+        recurse: yes
+        owner: "{{ user_name }}"
+        group: "{{ group_name }}"
