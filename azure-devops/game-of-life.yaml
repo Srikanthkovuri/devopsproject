@@ -9,19 +9,12 @@ schedules:
     branches:
       include:
         - "$(DEFAULT-BRANCH)"
-parameters:
-  - name: jdkversion
-    displayName: java version
-    type: string
-    default: '1.8'
-    values:
-      - '1.17'
-      - '1.11'
-      - '1.10'
-      - '1.8'
-      - '1.9'
 pool:
   vmImage: ubuntu-22.04
 stages:
-  -template: templates/build-stage-gol.yml
+  - template: templates/build-stage-gol.yml
+    parameters:
+      jdkversion: '1.8'
+      archievefilepattern: "**/*.war"
+   
   
